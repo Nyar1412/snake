@@ -12,6 +12,19 @@ package clases;
 public class obstaculos implements localizable{
     private Punto origen;
     private Punto fin;
+
+    public obstaculos(Punto origen, Punto fin) {
+        this.origen = origen;
+        this.fin = fin;
+    }
+
+    @Override
+    public Punto getPosicion() {
+        return this.origen; 
+    }
+    public Punto getPosicionFin() {
+        return this.fin; 
+    }
     
     
 }

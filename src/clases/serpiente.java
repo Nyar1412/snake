@@ -14,6 +14,13 @@ import java.util.LinkedList;
  */
 public class serpiente implements localizable {
 
+    private boolean detectarChoque() {
+        return this.cuerpo.stream().filter(p->!p.equals(this.cabeza)).anyMatch(p->((p.getX()==cabeza.getX())&&((p.getY()==cabeza.getY()))));
+    }
+    private void comerConsumable(){
+        this.comida+=5;
+    }
+
     enum Estado {
         IZQUIERDA, DERECHA, ARRIBA, ABAJO
     }
@@ -22,20 +29,40 @@ public class serpiente implements localizable {
     private Punto cabeza;
     private boolean choque;
     private Escenario esc;
+    private int comida;
 
     private LinkedList<Punto> cuerpo;
 
     public serpiente(Punto cabeza) {
-        this.movimiento = serpiente.Estado.IZQUIERDA;
+        this.movimiento = serpiente.Estado.DERECHA;
         this.cabeza = cabeza;
         this.choque = false;
         this.esc = null;
+        this.comida=0;
         this.cuerpo = new LinkedList<>();
         this.cuerpo.add(cabeza);
         this.cuerpo.add(new Punto(cabeza.getX() - 1, cabeza.getY()));
         this.cuerpo.add(new Punto(cabeza.getX() - 2, cabeza.getY()));
         this.cuerpo.add(new Punto(cabeza.getX() - 3, cabeza.getY()));
         this.cuerpo.add(new Punto(cabeza.getX() - 4, cabeza.getY()));
+    }
+    
+    
+    public void cambiarMovimiento(Estado estado){
+        switch(this.movimiento){
+            case IZQUIERDA:
+            case DERECHA:
+                if (estado.equals(Estado.ABAJO) || estado.equals(Estado.ARRIBA) ) {
+                    this.movimiento=estado;
+                }
+                break;
+            case ARRIBA:
+            case ABAJO:
+                if (estado.equals(Estado.IZQUIERDA) || estado.equals(Estado.DERECHA) ) {
+                    this.movimiento=estado;
+                }
+                break;
+        }
     }
 
     public void mover() {
@@ -57,13 +84,24 @@ public class serpiente implements localizable {
             }
             if (esc.estaEnEscenario(nuevo)) {
                 cuerpo.addFirst(nuevo);
-                cuerpo.removeLast();
                 cabeza = nuevo;
                 detectarChoque();
+                if(comida!=0){
+                    comida-=1;
+                }else{
+                    cuerpo.removeLast();
+                }
             }else{
                 choque=true;
             }
         }
     }
+
+    @Override
+    public Punto getPosicion() {
+        return this.cabeza;
+    }
+    
+    
 
 }

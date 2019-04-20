@@ -10,8 +10,22 @@ package clases;
  * @author Manuel Alejandro Perez Benitez
  */
 public class consumable implements localizable{
-    private Punto p;
+    private Punto punto;
     private int radio;
+
+    public consumable(Punto p, int radio) {
+        this.punto = p;
+        this.radio = radio;
+    }
+
+    @Override
+    public Punto getPosicion() {
+        return this.punto; //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public int getRadio() {
+        return radio;
+    }
     
     
 }
