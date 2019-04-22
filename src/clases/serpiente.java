@@ -15,7 +15,8 @@ import java.util.LinkedList;
 public class serpiente implements localizable {
 
     private boolean detectarChoque() {
-        return this.cuerpo.stream().filter(p->!p.equals(this.cabeza)).anyMatch(p->((p.getX()==cabeza.getX())&&((p.getY()==cabeza.getY()))));
+        this.choque=this.cuerpo.stream().filter(p->!p.equals(this.cabeza)).anyMatch(p->((p.getX()==cabeza.getX())&&((p.getY()==cabeza.getY()))));
+        return choque;
     }
     private void comerConsumable(){
         this.comida+=5;
