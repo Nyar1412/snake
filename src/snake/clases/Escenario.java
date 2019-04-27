@@ -13,13 +13,12 @@ import java.util.stream.Stream;
  * @author Manuel Alejandro Perez Benitez
  */
 public class Escenario {
-
-    protected ArrayList<Localizable> coches;
-    protected Punto origen;
-    protected Punto fin;
+    ArrayList<Localizable> localizables;
+    Punto origen;
+    Punto fin;
 
     public Escenario(Punto origen, Punto fin) {
-        coches = new ArrayList();
+        localizables = new ArrayList();
         this.origen = origen;
         this.fin = fin;
     }
@@ -29,21 +28,21 @@ public class Escenario {
         this.fin = fin;
     }
 
-    public void add(String cadena, int posX, int posY) {
+    public void generarEscenario(int numObstaculos, int numConsumables) {
         
     }
 
     
 
     public Stream<Localizable> getStream() {
-        return coches.stream();
+        return localizables.stream();
     }
 
     public boolean estaEnEscenario(Punto p) {
         boolean res = false;
         if (p.getX() >= this.origen.getX() && p.getX() <= this.fin.getX()) {
             if (p.getY() >= this.origen.getY() && p.getY() <= this.fin.getY()) {
-                res = true;
+               res = true;
             }
         }
         return res;
@@ -51,9 +50,9 @@ public class Escenario {
 
     public boolean detectarChoque(Localizable c, double distancia) {
         boolean res = false;
-        Localizable locA = coches.stream().filter(p -> p.getPosicion().equals(c.getPosicion())).findFirst().orElse(null);
+        Localizable locA = localizables.stream().filter(p -> p.getPosicion().equals(c.getPosicion())).findFirst().orElse(null);
         if (locA != null) {
-            res = coches.stream().filter(p -> !p.equals(locA)).anyMatch(p -> {
+            res = localizables.stream().filter(p -> !p.equals(locA)).anyMatch(p -> {
                 int modulo = (int) Math.sqrt(Math.pow((locA.getPosicion().getX() - p.getPosicion().getX()), 2)
                         + Math.pow((locA.getPosicion().getY() - p.getPosicion().getY()), 2));
                 return modulo <= distancia;
