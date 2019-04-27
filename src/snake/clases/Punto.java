@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package clases;
+package snake.clases;
 
 /**
  *
@@ -11,8 +11,8 @@ package clases;
  */
 public class Punto {
 
-    double x;
-    double y;
+    protected double x;
+    protected double y;
 
     public Punto(double x, double y) {
         this.x = x;
