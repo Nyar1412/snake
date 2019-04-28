@@ -34,7 +34,7 @@ public class Escenario {
             int posY = (int) ((Math.random() * (this.fin.getY() - this.origen.getY())) + this.origen.getY());
             int posX = (int) ((Math.random() * (this.fin.getX() - this.origen.getX())) + this.origen.getX());
             Punto p = new Punto(posX, posY);
-            Punto q = new Punto(p.getX() + 4, p.getY());
+            Punto q = new Punto(p.getX()+15, p.getY()+30);
             if (this.estaEnEscenario(p) && this.estaEnEscenario(q)) {
                 i++;
                 this.localizables.add(new Obstaculo(p, q));
@@ -75,9 +75,11 @@ public class Escenario {
 
                 if (p instanceof Obstaculo) {
 
-                    int modulo = (int) Math.sqrt(Math.pow((snake.getPosicion().getX() - p.getPosicion().getX()), 2)
-                            + Math.pow((snake.getPosicion().getY() - p.getPosicion().getY()), 2));
-                    if (modulo <= distancia) {
+                    
+                    if (Serp.getCabeza().getX() <= ((Obstaculo) p).getPosicionFin().getX() &&
+                            Serp.getCabeza().getX() >= p.getPosicion().getX() &&
+                            Serp.getCabeza().getY() <= ((Obstaculo) p).getPosicionFin().getY() &&
+                            Serp.getCabeza().getY() >= p.getPosicion().getY()) {
                         snake.setChoque(true);
                         System.out.println("obstaculo alcanzado");
                     }

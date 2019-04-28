@@ -37,9 +37,12 @@ public class Serpiente implements Localizable {
 
     private boolean detectarChoque() {
         this.choque = this.cuerpo.stream().filter(p -> !p.equals(this.cabeza))
-                .anyMatch(p ->
-                        ((p.getX() == cabeza.getX()) 
-                                && ((p.getY() == cabeza.getY()))));
+                .anyMatch(p ->{
+                    int modulo = (int) Math.sqrt(Math.pow((cabeza.getX() - p.getX()), 2)
+                            + Math.pow((cabeza.getY() - p.getY()), 2));
+                   return modulo < 1; 
+                });
+                     
         if(choque)System.out.println("te has mordido");
         return choque;
     }
