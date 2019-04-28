@@ -9,11 +9,11 @@ package snake.clases;
  *
  * @author Manuel Alejandro Perez Benitez
  */
-public class Obstaculos implements Localizable{
+public class Obstaculo implements Localizable{
     private Punto origen;
     private Punto fin;
 
-    public Obstaculos(Punto origen, Punto fin) {
+    public Obstaculo(Punto origen, Punto fin) {
         this.origen = origen;
         this.fin = fin;
     }

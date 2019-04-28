@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package snake.clases;
 
 import java.util.ArrayList;
@@ -39,7 +34,7 @@ public class Escenario {
             if(this.estaEnEscenario(p) && this.estaEnEscenario(q)){
                 if(isPuntoVacio(p) && isPuntoVacio(q)){
                     i++;
-                    this.localizables.add(new Obstaculos(p,q));
+                    this.localizables.add(new Obstaculo(p,q));
                 }
             }
         }
@@ -101,9 +96,9 @@ public class Escenario {
     public boolean isPuntoVacio(Punto p){
         return localizables.stream().flatMap(r->{
                     ArrayList<Punto> puntos=new ArrayList<>();
-                    if(r instanceof Obstaculos){
+                    if(r instanceof Obstaculo){
                         puntos.add(r.getPosicion());
-                        puntos.add(((Obstaculos) r).getPosicionFin());
+                        puntos.add(((Obstaculo) r).getPosicionFin());
                     }else{
                         puntos.add(r.getPosicion());
                     }
@@ -111,3 +106,4 @@ public class Escenario {
                 }).anyMatch(r-> ((r.getX()==p.getX())&&(r.getY()==p.getY())));
     }
 }
+
