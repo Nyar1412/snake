@@ -29,7 +29,29 @@ public class Escenario {
     }
 
     public void generarEscenario(int numObstaculos, int numConsumables) {
-        
+        int radio=3;
+        this.localizables.add(new Serpiente(new Punto(this.origen.getX()+10,this.origen.getY()+10)));
+        for (int i = 0; i < numConsumables; ) {
+            int posY=(int)((Math.random()*(this.fin.getY()-this.origen.getY()))+this.origen.getY());
+            int posX=(int)((Math.random()*(this.fin.getX()-this.origen.getX()))+this.origen.getX());
+            Punto p=new Punto(posX,posY);
+            Punto q= new Punto(p.getX()+4,p.getY()+2);
+            if(this.estaEnEscenario(p) && this.estaEnEscenario(q)){
+                if(isPuntoVacio(p) && isPuntoVacio(q)){
+                    i++;
+                    this.localizables.add(new Obstaculos(p,q));
+                }
+            }
+        }
+        for (int i = 0; i < numObstaculos; i++) {
+            int posY=(int)((Math.random()*(this.fin.getY()-this.origen.getY()))+this.origen.getY());
+            int posX=(int)((Math.random()*(this.fin.getX()-this.origen.getX()))+this.origen.getX());
+            Punto p=new Punto(posX,posY);
+            if(this.estaEnEscenario(p) && isPuntoVacio(p)){
+                i++;
+                this.localizables.add(new Consumable(p,radio));
+            }
+        }
     }
 
     
@@ -74,5 +96,18 @@ public class Escenario {
             p.setX(this.origen.getX());
         }
         return p;
+    }
+    
+    public boolean isPuntoVacio(Punto p){
+        return localizables.stream().flatMap(r->{
+                    ArrayList<Punto> puntos=new ArrayList<>();
+                    if(r instanceof Obstaculos){
+                        puntos.add(r.getPosicion());
+                        puntos.add(((Obstaculos) r).getPosicionFin());
+                    }else{
+                        puntos.add(r.getPosicion());
+                    }
+                    return puntos.stream();
+                }).anyMatch(r-> ((r.getX()==p.getX())&&(r.getY()==p.getY())));
     }
 }
