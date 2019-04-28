@@ -22,7 +22,7 @@ public class Serpiente implements Localizable {
 
     private LinkedList<Punto> cuerpo;
 
-    public Serpiente(Punto cabeza) {
+    public Serpiente(Punto cabeza,int size) {
         this.movimiento = Serpiente.Estado.DERECHA;
         this.cabeza = cabeza;
         this.choque = false;
@@ -30,22 +30,25 @@ public class Serpiente implements Localizable {
         this.comida = 0;
         this.cuerpo = new LinkedList<>();
         this.cuerpo.add(cabeza);
-        this.cuerpo.add(new Punto(cabeza.getX() - 1, cabeza.getY()));
-        this.cuerpo.add(new Punto(cabeza.getX() - 2, cabeza.getY()));
-        this.cuerpo.add(new Punto(cabeza.getX() - 3, cabeza.getY()));
-        this.cuerpo.add(new Punto(cabeza.getX() - 4, cabeza.getY()));
+        for (int i = 0; i < size; i++) {
+            this.cuerpo.add(new Punto(cabeza.getX() - i, cabeza.getY()));
+        }
     }
 
     private boolean detectarChoque() {
-        this.choque = this.cuerpo.stream().filter(p -> !p.equals(this.cabeza)).anyMatch(p -> ((p.getX() == cabeza.getX()) && ((p.getY() == cabeza.getY()))));
+        this.choque = this.cuerpo.stream().filter(p -> !p.equals(this.cabeza))
+                .anyMatch(p ->
+                        ((p.getX() == cabeza.getX()) 
+                                && ((p.getY() == cabeza.getY()))));
+        if(choque)System.out.println("te has mordido");
         return choque;
     }
 
-    private void comerConsumable() {
-        this.comida += 5;
+    public void comerConsumable() {
+        this.comida += 30;
     }
 
-    enum Estado {
+    public enum Estado {
         IZQUIERDA
         , DERECHA
         , ARRIBA
@@ -69,21 +72,21 @@ public class Serpiente implements Localizable {
         }
     }
 
-    public void mover() {
+    public void mover(int paso) {
         Punto nuevo = Localizable.p;
         if (!esc.equals(null) && !choque) {
             switch (movimiento) {
                 case IZQUIERDA:
-                    nuevo = new Punto(cabeza.getX() - 1, cabeza.getY());
+                    nuevo = new Punto(cabeza.getX() - paso, cabeza.getY());
                     break;
                 case ABAJO:
-                    nuevo = new Punto(cabeza.getX(), cabeza.getY() + 1);
+                    nuevo = new Punto(cabeza.getX(), cabeza.getY() + paso);
                     break;
                 case ARRIBA:
-                    nuevo = new Punto(cabeza.getX(), cabeza.getY() - 1);
+                    nuevo = new Punto(cabeza.getX(), cabeza.getY() - paso);
                     break;
                 case DERECHA:
-                    nuevo = new Punto(cabeza.getX() + 1, cabeza.getY());
+                    nuevo = new Punto(cabeza.getX() + paso, cabeza.getY());
                     break;
             }
             if (esc.estaEnEscenario(nuevo)) {
@@ -97,6 +100,7 @@ public class Serpiente implements Localizable {
                 }
             } else {
                 choque = true;
+                System.out.println("final del escenario");
             }
         }
     }

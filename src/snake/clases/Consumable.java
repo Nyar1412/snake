@@ -26,6 +26,15 @@ public class Consumable implements Localizable{
     public int getRadio() {
         return radio;
     }
+
+    public Punto getPunto() {
+        return punto;
+    }
+
+    public void setPunto(Punto punto) {
+        this.punto = punto;
+    }
+    
     
     
 }
