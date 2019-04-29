@@ -120,7 +120,7 @@ public class Escenario {
 
                 } else if (p instanceof Consumable) {
                     int modulo = hallarModulo(snake.getPosicion(),p.getPosicion()); 
-                    if (modulo <= 5) {
+                    if (modulo <= 9) {
                         snake.comerConsumable();
                         p = (Consumable) p;
                         ((Consumable) p).setPunto(new Punto(-100, -100));
@@ -135,7 +135,7 @@ public class Escenario {
 
     }
     /**
-     * Metodo para hadquirir el modulo de dos puntos dados
+     * Metodo para adquirir el modulo de dos puntos dados
      * 
      * @param p punto origen
      * @param q punto fin

@@ -44,7 +44,6 @@ public class FXMLDocumentController implements Initializable {
     private Serpiente serpiente;
     private Timeline timeLine;
     private boolean reiniciar;
-    boolean masRojo;
     int inbulneravilidad;
 
     @FXML
@@ -56,7 +55,6 @@ public class FXMLDocumentController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        masRojo = true;
         this.inbulneravilidad = 0;
         escenario = new Escenario(new Punto(0, 0),
                 new Punto(canvasEscenario.getWidth() - 5,
@@ -90,7 +88,7 @@ public class FXMLDocumentController implements Initializable {
             }
         } else {
             reset();
-            btnEjecutar.setText("Reset");
+            
             if (timeLine.getStatus() == Timeline.Status.RUNNING) {
                 timeLine.stop();
             }
@@ -108,7 +106,6 @@ public class FXMLDocumentController implements Initializable {
         serpiente.setEsc(escenario);
         escenario.generarEscenario(9, 16, serpiente);
         this.reiniciar=false;
-        this.masRojo = true;
         this.inbulneravilidad = 0;
         btnEjecutar.setText("Play");
 
@@ -181,6 +178,8 @@ public class FXMLDocumentController implements Initializable {
 
         } else {
             reiniciar = true;
+            
+            btnEjecutar.setText("Reset");
         }
     }
 
@@ -215,7 +214,7 @@ public class FXMLDocumentController implements Initializable {
                 .filter(p -> p instanceof Consumable)
                 .map(p -> (Consumable) p)
                 .forEach(consumable->{
-                    gcSnake.fillOval(consumable.getPosicion().getX(), consumable.getPosicion().getY(), consumable.getRadio(), consumable.getRadio());
+                    gcSnake.fillOval(consumable.getPosicion().getX()-10, consumable.getPosicion().getY()-10, consumable.getRadio(), consumable.getRadio());
                 });
         //dibuja la serpiente
         int verde = 255;
@@ -241,15 +240,15 @@ public class FXMLDocumentController implements Initializable {
                     }
                 }
                 gcSnake.setStroke(Color.rgb(rojo, verde, 0));
-                gcSnake.strokeLine(punto.getX() - 3, punto.getY(), punto.getX(), punto.getY());
+                gcSnake.strokeLine(punto.getX() - 4, punto.getY()-3, punto.getX(), punto.getY()-3);
             }
 
         }
         gcSnake.setStroke(Color.rgb(0, 255, 0));
         gcSnake.strokeLine(this.serpiente.getCabeza().getX() - 4,
-                this.serpiente.getCabeza().getY(),
+                this.serpiente.getCabeza().getY()-3,
                 this.serpiente.getCabeza().getX(),
-                this.serpiente.getCabeza().getY());
+                this.serpiente.getCabeza().getY()-3);
 
     }
 }
