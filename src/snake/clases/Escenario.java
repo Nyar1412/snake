@@ -28,13 +28,13 @@ public class Escenario {
 
     public void generarEscenario(int numObstaculos, int numConsumables, Serpiente serpiente) {
         this.numConsumables = numConsumables;
-        int radio = 10;
+        int radio = 15;
         this.localizables.add(serpiente);
         for (int i = 0; i < numObstaculos;) {
             int posY = (int) ((Math.random() * (this.fin.getY() - this.origen.getY())) + this.origen.getY());
             int posX = (int) ((Math.random() * (this.fin.getX() - this.origen.getX())) + this.origen.getX());
             Punto p = new Punto(posX, posY);
-            Punto q = new Punto(p.getX()+15, p.getY()+30);
+            Punto q = new Punto(p.getX()+18, p.getY());
             if (this.estaEnEscenario(p) && this.estaEnEscenario(q)) {
                 i++;
                 this.localizables.add(new Obstaculo(p, q));
@@ -74,20 +74,21 @@ public class Escenario {
             localizables.stream().filter(p -> !p.equals(snake)).forEach(p -> {
 
                 if (p instanceof Obstaculo) {
-
+                    int modulo = hallarModulo(snake.getPosicion(),p.getPosicion());
+                    int modulo2 = hallarModulo(snake.getPosicion(),((Obstaculo) p).getPosicionFin());
+                    int modulo3 = hallarModulo(snake.getPosicion(),new Punto(
+                            (p.getPosicion().getX()+(((Obstaculo) p).getPosicionFin().getX()))/2, 
+                            (p.getPosicion().getY()+(((Obstaculo) p).getPosicionFin().getY()))/2)
+                    );
                     
-                    if (Serp.getCabeza().getX() <= ((Obstaculo) p).getPosicionFin().getX() &&
-                            Serp.getCabeza().getX() >= p.getPosicion().getX() &&
-                            Serp.getCabeza().getY() <= ((Obstaculo) p).getPosicionFin().getY() &&
-                            Serp.getCabeza().getY() >= p.getPosicion().getY()) {
+                    if (modulo<10||modulo2<10||modulo3<10) {
                         snake.setChoque(true);
                         System.out.println("obstaculo alcanzado");
                     }
 
                 } else if (p instanceof Consumable) {
-                    int modulo = (int) Math.sqrt(Math.pow((snake.getPosicion().getX() - p.getPosicion().getX()), 2)
-                            + Math.pow((snake.getPosicion().getY() - p.getPosicion().getY()), 2));
-                    if (modulo <= distancia) {
+                    int modulo = hallarModulo(snake.getPosicion(),p.getPosicion()); 
+                    if (modulo <= 7) {
                         snake.comerConsumable();
                         p = (Consumable) p;
                         ((Consumable) p).setPunto(new Punto(-100, -100));
@@ -101,11 +102,12 @@ public class Escenario {
         return res;
 
     }
-
-    public boolean isPartidaFinalizada() {
-        return numConsumables == 0;
+    
+    public int hallarModulo(Punto p,Punto q){
+        return (int) Math.sqrt(Math.pow((p.getX() - q.getX()), 2)
+                            + Math.pow(p.getY() - q.getY(), 2));
     }
-
+    
     public Punto ubicarEnEscenario(Punto p) {
         if (p.getX() > this.fin.getX()) {
             p.setX(this.fin.getX());
@@ -117,6 +119,10 @@ public class Escenario {
             p.setX(this.origen.getX());
         }
         return p;
+    }
+
+    public boolean isPartidaFinalizada() {
+        return numConsumables == 0;
     }
 
     public boolean isPuntoVacio(Punto p) {

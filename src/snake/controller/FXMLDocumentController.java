@@ -44,6 +44,8 @@ public class FXMLDocumentController implements Initializable {
     private Serpiente serpiente;
     private Timeline timeLine;
     private boolean reiniciar;
+    boolean masRojo;
+    int inbulneravilidad;
 
     @FXML
     private Button btnEjecutar;
@@ -54,12 +56,15 @@ public class FXMLDocumentController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        masRojo = true;
+        this.inbulneravilidad = 0;
         escenario = new Escenario(new Punto(0, 0),
-                new Punto(canvasEscenario.getWidth() - 18,
-                        canvasEscenario.getHeight() - 15));
+                new Punto(canvasEscenario.getWidth() - 5,
+                        canvasEscenario.getHeight() - 10));
         serpiente = new Serpiente(new Punto(100, 100), 30);
         serpiente.setEsc(escenario);
-        escenario.generarEscenario(5, 7, serpiente);
+        escenario.generarEscenario(9, 16, serpiente);
+        btnEjecutar.setText("Play");
         canvasEscenario.setOnKeyPressed(event -> mover());
         gcSnake = canvasEscenario.getGraphicsContext2D();
         gcSnake.setStroke(Color.BLACK);
@@ -77,12 +82,15 @@ public class FXMLDocumentController implements Initializable {
     private void ejecutar(ActionEvent event) {
         if (!reiniciar) {
             if (timeLine.getStatus() == Timeline.Status.RUNNING) {
+                btnEjecutar.setText("Pause");
                 timeLine.stop();
             } else {
+                btnEjecutar.setText("Play");
                 timeLine.play();
             }
         } else {
             reset();
+            btnEjecutar.setText("Reset");
             if (timeLine.getStatus() == Timeline.Status.RUNNING) {
                 timeLine.stop();
             }
@@ -92,11 +100,15 @@ public class FXMLDocumentController implements Initializable {
 
     private void reset() {
         escenario = new Escenario(new Punto(0, 0),
-                new Punto(canvasEscenario.getWidth() - 150,
-                        canvasEscenario.getHeight() - 15));
+                new Punto(canvasEscenario.getWidth() - 5,
+                        canvasEscenario.getHeight() - 10));
         serpiente = new Serpiente(new Punto(100, 100), 30);
         serpiente.setEsc(escenario);
-        escenario.generarEscenario(5, 7, serpiente);
+        escenario.generarEscenario(9, 16, serpiente);
+        this.reiniciar=false;
+        this.masRojo = true;
+        this.inbulneravilidad = 0;
+        btnEjecutar.setText("Play");
 
         this.resetCanvas();
     }
@@ -142,18 +154,22 @@ public class FXMLDocumentController implements Initializable {
 
     //método a ejecutar periódidicamente
     void mover() {
-        int paso = 1;
-        serpiente.mover(paso);
-        escenario.detectarChoque(serpiente, 10);
-        if (serpiente.isChoque()) {
+        if (!serpiente.isChoque()) {
+            int paso = 1;
+            serpiente.mover(paso);
+            if (inbulneravilidad < 40) {
+                inbulneravilidad++;
+            } else {
+                escenario.detectarChoque(serpiente, 10);
+            }
+            resetCanvas();
+            if (escenario.isPartidaFinalizada()) {
+                ganarLaPartida();
+            }
+
+        } else {
             reiniciar = true;
         }
-        resetCanvas();
-        if (escenario.isPartidaFinalizada()) {
-            ganarLaPartida();
-        }
-
-        //serpiente.cambiarMovimiento(alto);
     }
 
     private void ganarLaPartida() {
@@ -164,19 +180,21 @@ public class FXMLDocumentController implements Initializable {
     }
 
     private void resetCanvas() {
+        boolean masRojo = true;
         gcSnake.setFill(Color.ANTIQUEWHITE);
         gcSnake.fillRect(0, 0, canvasEscenario.getWidth(), canvasEscenario.getHeight());
-        gcSnake.setFill(Color.RED);
-        ArrayList<Obstaculo> obstaculos = (ArrayList) this.escenario.getStream()
+        //dibujar obstaculos
+        gcSnake.setStroke(Color.RED);
+        gcSnake.setLineWidth(10.0);
+        this.escenario.getStream()
                 .filter(p -> p instanceof Obstaculo)
-                .map(p -> (Obstaculo) p)
-                .collect(Collectors.toList());
-        for (Obstaculo obstaculo : obstaculos) {
-            int ancho=(int)(obstaculo.getPosicion().getX()-obstaculo.getPosicionFin().getX());
-            int alto=(int)(obstaculo.getPosicion().getY()-obstaculo.getPosicionFin().getY());
-            gcSnake.fillRect(obstaculo.getPosicion().getX(),
-                    obstaculo.getPosicion().getY(), ancho, alto);
-        }
+                .map(p -> (Obstaculo) p).forEach(obstaculo -> {
+            gcSnake.strokeLine(obstaculo.getPosicion().getX(),
+                    obstaculo.getPosicion().getY(),
+                    obstaculo.getPosicionFin().getX(),
+                    obstaculo.getPosicionFin().getY());
+        });
+
         ArrayList<Consumable> consumables = (ArrayList) this.escenario.getStream()
                 .filter(p -> p instanceof Consumable)
                 .map(p -> (Consumable) p)
@@ -189,17 +207,34 @@ public class FXMLDocumentController implements Initializable {
         int rojo = 0;
         for (Punto punto : this.serpiente.getCuerpo()) {
             if (!punto.equals(this.serpiente.getCabeza())) {
-                gcSnake.setFill(Color.rgb(rojo, verde, 0));
-                gcSnake.fillRect(punto.getX(), punto.getY(), 15, 15);
-                rojo += 1;
-                verde += 1;
-                rojo %= 255;
-                verde %= 255;
+
+                if (masRojo) {
+                    verde -= 2;
+                    rojo += 2;
+                    if (verde == 1) {
+                        verde = 0;
+                        rojo = 255;
+                        masRojo = false;
+                    }
+                } else {
+                    rojo -= 2;
+                    verde += 2;
+                    if (rojo == 1) {
+                        rojo = 0;
+                        verde = 255;
+                        masRojo = true;
+                    }
+                }
+                gcSnake.setStroke(Color.rgb(rojo, verde, 0));
+                gcSnake.strokeLine(punto.getX() - 3, punto.getY(), punto.getX(), punto.getY());
             }
 
         }
-        gcSnake.setFill(Color.DARKGREEN);
-        gcSnake.fillRect(this.serpiente.getCabeza().getX(), this.serpiente.getCabeza().getY(), 15, 15);
+        gcSnake.setStroke(Color.rgb(0, 255, 0));
+        gcSnake.strokeLine(this.serpiente.getCabeza().getX() - 4,
+                this.serpiente.getCabeza().getY(),
+                this.serpiente.getCabeza().getX(),
+                this.serpiente.getCabeza().getY());
 
     }
 }

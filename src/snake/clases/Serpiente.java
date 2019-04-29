@@ -4,8 +4,6 @@
  * and open the template in the editor.
  */
 package snake.clases;
-
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -29,19 +27,14 @@ public class Serpiente implements Localizable {
         this.esc = null;
         this.comida = 0;
         this.cuerpo = new LinkedList<>();
-        this.cuerpo.add(cabeza);
         for (int i = 0; i < size; i++) {
             this.cuerpo.add(new Punto(cabeza.getX() - i, cabeza.getY()));
         }
     }
 
     private boolean detectarChoque() {
-        this.choque = this.cuerpo.stream().filter(p -> !p.equals(this.cabeza))
-                .anyMatch(p ->{
-                    int modulo = (int) Math.sqrt(Math.pow((cabeza.getX() - p.getX()), 2)
-                            + Math.pow((cabeza.getY() - p.getY()), 2));
-                   return modulo < 1; 
-                });
+        this.choque = this.cuerpo.stream()
+                .anyMatch(p ->this.cabeza.getX()==p.getX() && this.cabeza.getY()==p.getY());
                      
         if(choque)System.out.println("te has mordido");
         return choque;
@@ -93,7 +86,7 @@ public class Serpiente implements Localizable {
                     break;
             }
             if (esc.estaEnEscenario(nuevo)) {
-                cuerpo.addFirst(nuevo);
+                cuerpo.addFirst(cabeza);
                 cabeza = nuevo;
                 detectarChoque();
                 if (comida != 0) {
