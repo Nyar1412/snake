@@ -12,6 +12,13 @@ import java.util.LinkedList;
  */
 public class Serpiente implements Localizable {
 
+    public enum Estado {
+        IZQUIERDA
+        , DERECHA
+        , ARRIBA
+        , ABAJO
+    }
+
     private Estado movimiento;
     private Punto cabeza;
     private boolean choque;
@@ -31,26 +38,26 @@ public class Serpiente implements Localizable {
             this.cuerpo.add(new Punto(cabeza.getX() - i, cabeza.getY()));
         }
     }
-
+    /**
+     * Metodo que detecta si la serpiente se a mordido a si misma
+     * @return true si la serpiente se esta mordiendo , false si no
+     */
     private boolean detectarChoque() {
         this.choque = this.cuerpo.stream()
                 .anyMatch(p ->this.cabeza.getX()==p.getX() && this.cabeza.getY()==p.getY());
-                     
-        if(choque)System.out.println("te has mordido");
         return choque;
     }
-
+    /**
+     * Metodo que aumenta el atributo comida , mientras este atributo no sea 0
+     * la serpiente no eliminara puntos de su cola, sino que reducira este atributo
+     */
     public void comerConsumable() {
         this.comida += 30;
     }
-
-    public enum Estado {
-        IZQUIERDA
-        , DERECHA
-        , ARRIBA
-        , ABAJO
-    }
-
+    /**
+     * cambia el movimiento de la serpiente
+     * @param estado movimiento a cual cambiara
+     */
     public void cambiarMovimiento(Estado estado) {
         switch (this.movimiento) {
             case IZQUIERDA:
@@ -67,7 +74,11 @@ public class Serpiente implements Localizable {
                 break;
         }
     }
-
+    
+    /**
+     * Metodo que mueve la serpiente por el escenario
+     * @param paso distancia que recorre la serpiente
+     */
     public void mover(int paso) {
         Punto nuevo = Localizable.p;
         if (!esc.equals(null) && !choque) {
@@ -96,11 +107,15 @@ public class Serpiente implements Localizable {
                 }
             } else {
                 choque = true;
-                System.out.println("final del escenario");
             }
         }
     }
-
+     
+    /**
+     * Getter's y Setter's
+     * 
+     */
+    
     @Override
     public Punto getPosicion() {
         return this.cabeza;

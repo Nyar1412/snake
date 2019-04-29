@@ -97,7 +97,9 @@ public class FXMLDocumentController implements Initializable {
         }
 
     }
-
+    /**
+     * metodo que resetea el juego
+     */
     private void reset() {
         escenario = new Escenario(new Punto(0, 0),
                 new Punto(canvasEscenario.getWidth() - 5,
@@ -129,6 +131,10 @@ public class FXMLDocumentController implements Initializable {
 
     }
 
+    /**
+     * cambiar el movimiento de la sepiente 
+     * @param event 
+     */
     @FXML
     public void cambiarMovimiento(KeyEvent event) {
         KeyCode kc = event.getCode();
@@ -152,7 +158,13 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    //método a ejecutar periódidicamente
+    /**
+     * metodo que se ejecuta periodicamente , mueve la serpiente y comprueba si
+     * ha ganado a partida , tambien redibuja el canvas, el atributo invulnerabiidad
+     * sirve para dar unos frames de invuneraibidad a la serpiente en el cua no puede
+     * comer consumables ni golpearse contra obstaculos , por si hay un eemento
+     * generado justo encima , que el juego sea mas justo
+     */
     void mover() {
         if (!serpiente.isChoque()) {
             int paso = 1;
@@ -160,7 +172,7 @@ public class FXMLDocumentController implements Initializable {
             if (inbulneravilidad < 40) {
                 inbulneravilidad++;
             } else {
-                escenario.detectarChoque(serpiente, 10);
+                escenario.detectarChoque(serpiente);
             }
             resetCanvas();
             if (escenario.isPartidaFinalizada()) {
@@ -178,9 +190,12 @@ public class FXMLDocumentController implements Initializable {
             timeLine.stop();
         }
     }
-
+    /**
+     * metodo para redibujar el canvas
+     */
     private void resetCanvas() {
         boolean masRojo = true;
+        //pinta el fondo del escenario
         gcSnake.setFill(Color.ANTIQUEWHITE);
         gcSnake.fillRect(0, 0, canvasEscenario.getWidth(), canvasEscenario.getHeight());
         //dibujar obstaculos
@@ -194,15 +209,15 @@ public class FXMLDocumentController implements Initializable {
                     obstaculo.getPosicionFin().getX(),
                     obstaculo.getPosicionFin().getY());
         });
-
-        ArrayList<Consumable> consumables = (ArrayList) this.escenario.getStream()
+        gcSnake.setFill(Color.CYAN);
+        //dibuja los consumables
+        this.escenario.getStream()
                 .filter(p -> p instanceof Consumable)
                 .map(p -> (Consumable) p)
-                .collect(Collectors.toList());
-        gcSnake.setFill(Color.CYAN);
-        for (Consumable consumable : consumables) {
-            gcSnake.fillOval(consumable.getPosicion().getX(), consumable.getPosicion().getY(), consumable.getRadio(), consumable.getRadio());
-        }
+                .forEach(consumable->{
+                    gcSnake.fillOval(consumable.getPosicion().getX(), consumable.getPosicion().getY(), consumable.getRadio(), consumable.getRadio());
+                });
+        //dibuja la serpiente
         int verde = 255;
         int rojo = 0;
         for (Punto punto : this.serpiente.getCuerpo()) {

@@ -20,16 +20,30 @@ public class Escenario {
         this.fin = fin;
         this.numConsumables = 0;
     }
-
+    
+    /**
+     * Hace un set de los puntos de origen y fnal del escenario 
+     * @param origen Punto de origen
+     * @param fin Punto final
+     */
     public void set(Punto origen, Punto fin) {
         this.origen = origen;
         this.fin = fin;
     }
-
+    
+    
+    /**
+     * Metodo que genera los elementos de dentro de un escenario a excepcion de
+     * a serpiente , la cual se pasa como parametro , y se vincula al escenario
+     * @param numObstaculos numero de obstaculos a crear
+     * @param numConsumables numero de consuables a crear
+     * @param serpiente serpiente a vincular
+     */
     public void generarEscenario(int numObstaculos, int numConsumables, Serpiente serpiente) {
         this.numConsumables = numConsumables;
         int radio = 15;
         this.localizables.add(serpiente);
+        serpiente.setEsc(this);
         for (int i = 0; i < numObstaculos;) {
             int posY = (int) ((Math.random() * (this.fin.getY() - this.origen.getY())) + this.origen.getY());
             int posX = (int) ((Math.random() * (this.fin.getX() - this.origen.getX())) + this.origen.getX());
@@ -51,11 +65,21 @@ public class Escenario {
             }
         }
     }
-
+    /**
+     * toma el stream para gestionar los elementos de escenario fuera del objeto
+     * 
+     * @return stream de Localizable
+     */
     public Stream<Localizable> getStream() {
         return localizables.stream();
     }
 
+    /**
+     * Metodo que comprueba si un punto del escenario existe dento de el 
+     * o se sae del mismo
+     * @param p punto a gstionar
+     * @return true si existe dentro del escenario , false si no
+     */
     public boolean estaEnEscenario(Punto p) {
         boolean res = false;
         if (p.getX() >= this.origen.getX() && p.getX() <= this.fin.getX()) {
@@ -65,8 +89,16 @@ public class Escenario {
         }
         return res;
     }
-
-    public boolean detectarChoque(Serpiente Serp, double distancia) {
+    
+    /**
+     * Metodo que se ocupa de la gestion de golpes entre la cabeza de un Objeto 
+     * del tipo Serpiente,y el resto de objetos en el escenario
+     * 
+     * @param Serp Objeto del tipo Serpiente a a que se aplicará el modelo. 
+     * De estar entre 
+     * @return true si hay un choque o false de lo contario
+     */
+    public boolean detectarChoque(Serpiente Serp) {
         boolean res = false;
         Serpiente snake = (Serpiente) localizables.stream().filter(p -> p.getPosicion().equals(Serp.getPosicion())).findFirst().orElse(null);
         if (snake != null) {
@@ -102,12 +134,23 @@ public class Escenario {
         return res;
 
     }
-    
+    /**
+     * Metodo para hadquirir el modulo de dos puntos dados
+     * 
+     * @param p punto origen
+     * @param q punto fin
+     * @return el modulo entero de ambos metodos
+     */
     public int hallarModulo(Punto p,Punto q){
         return (int) Math.sqrt(Math.pow((p.getX() - q.getX()), 2)
                             + Math.pow(p.getY() - q.getY(), 2));
     }
-    
+    /**
+     * Metodo a aplicar para ubiar un unto que tene alun elemento fuera del
+     * escenario dentro del mismo
+     * @param p Punto a reubicar
+     * @return punto reubicado
+     */
     public Punto ubicarEnEscenario(Punto p) {
         if (p.getX() > this.fin.getX()) {
             p.setX(this.fin.getX());
@@ -120,11 +163,20 @@ public class Escenario {
         }
         return p;
     }
-
+    
+    /**
+     * Metodo para saber si la patida se ha terminado
+     * @return tru si la partida continua , false si no
+     */
     public boolean isPartidaFinalizada() {
         return numConsumables == 0;
     }
-
+    /**
+     * Metodo que comprueba si el escenario tiene algun elemento en un punto 
+     * dado
+     * @param p punto a estionar
+     * @return true si aun elemento pasa por ese punto , false si no
+     */
     public boolean isPuntoVacio(Punto p) {
         return localizables.stream().flatMap(r -> {
             ArrayList<Punto> puntos = new ArrayList<>();

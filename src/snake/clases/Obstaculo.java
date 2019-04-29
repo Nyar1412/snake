@@ -26,14 +26,4 @@ public class Obstaculo implements Localizable{
         return this.fin; 
     }
     
-    public boolean isDentroObstaculo(Punto p) {
-        boolean res = false;
-        if (p.getX() >= this.origen.getX() && p.getX() <= this.fin.getX()) {
-            if (p.getY() >= this.origen.getY() && p.getY() <= this.fin.getY()) {
-                res = true;
-            }
-        }
-        return res;
-    }
-    
 }
