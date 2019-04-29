@@ -88,7 +88,7 @@ public class Escenario {
 
                 } else if (p instanceof Consumable) {
                     int modulo = hallarModulo(snake.getPosicion(),p.getPosicion()); 
-                    if (modulo <= 7) {
+                    if (modulo <= 5) {
                         snake.comerConsumable();
                         p = (Consumable) p;
                         ((Consumable) p).setPunto(new Punto(-100, -100));
